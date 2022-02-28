@@ -78,6 +78,7 @@ class TD3():
             soft_update(self.critic_target, self.critic, self.tau)
             soft_update(self.actor_target,  self.actor, self.tau)
 
+            return (critic_loss.item(), actor_loss.item())
 
 
 

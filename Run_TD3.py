@@ -41,6 +41,7 @@ for iteration in range(1,2):
     print('env:', args.env_name, 'is created!')
     env.seed(args.seed)
     env.action_space.seed(args.seed)
+    action_limit = env.action_space.high[0]
 
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
@@ -62,20 +63,19 @@ for iteration in range(1,2):
 
         while not done:
             if args.start_steps > total_numsteps:
-                action = env.action_space.sample()/float(env.action_space.high[0])
+                action = env.action_space.sample() / action_limit
             else:
-                action = agent.select_action(state) + 0.1 * np.random.normal(0, 1.0, [env.action_space.shape[0]])
-
+                action = (agent.select_action(state) + 0.1 * np.random.normal(0.0, 1.0, [env.action_space.shape[0]])).clip(-1.0,1.0)
 
             if len(agent.buffer) > args.batch_size:
                 # Number of updates per step in environment
                 for i in range(args.updates_per_step):
                     # Update parameters of all the networks
-                    critic_loss = agent.update_parameters(args.batch_size, updates)
+                    loss = agent.update_parameters(args.batch_size, updates)
 
                     updates += 1
 
-            next_state, reward, done, _ = env.step(action)  # Step
+            next_state, reward, done, _ = env.step(action * action_limit)  # Step
             episode_steps += 1
             total_numsteps += 1
             episode_reward += reward
