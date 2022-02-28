@@ -1,4 +1,4 @@
-from Model.Model import Actor, Critic, Critic_CNN
+from Model.Model import Actor, Critic
 import torch
 import torch.nn.functional as F
 from Common.Utils import copy_weight, soft_update, hard_update
@@ -23,9 +23,9 @@ class TD3():
         hard_update(self.actor_target, self.actor)
 
 
-        self.critic      = Critic_CNN(num_inputs, action_space.shape[0]).to(self.device)
+        self.critic      = Critic(num_inputs, action_space.shape[0]).to(self.device)
         self.critic_optimizer = torch.optim.Adam(self.critic.parameters(), lr=args.lr)
-        self.critic_target = Critic_CNN(num_inputs, action_space.shape[0]).to(self.device)
+        self.critic_target = Critic(num_inputs, action_space.shape[0]).to(self.device)
         hard_update(self.critic_target, self.critic)
 
         self.buffer = ReplayMemory(self.buffer_size, args.seed)

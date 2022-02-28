@@ -4,7 +4,7 @@ import numpy as np
 from Common.Buffer import ReplayMemory, Buffer
 from Common.Utils import copy_weight, soft_update, hard_update
 from torch.optim import Adam
-from Model.Model import QNetwork, Squashed_Gaussian_Actor, GaussianPolicy, DeterministicPolicy, QANetwork
+from Model.Model import QNetwork, Squashed_Gaussian_Actor, GaussianPolicy, DeterministicPolicy
 import os
 
 class SAC(object):
@@ -23,10 +23,10 @@ class SAC(object):
 
         self.device = torch.device("cuda" if args.cuda else "cpu")
 
-        self.critic = QANetwork(num_inputs, action_space.shape[0], action_space.low[0], args.hidden_size).to(device=self.device)
+        self.critic = QNetwork(num_inputs, action_space.shape[0], action_space.low[0], args.hidden_size).to(device=self.device)
         self.critic_optim = Adam(self.critic.parameters(), lr=args.lr)
 
-        self.critic_target = QANetwork(num_inputs, action_space.shape[0], action_space.low[0], args.hidden_size).to(self.device)
+        self.critic_target = QNetwork(num_inputs, action_space.shape[0], action_space.low[0], args.hidden_size).to(self.device)
         hard_update(self.critic_target, self.critic)
 
         self.buffer = ReplayMemory(self.buffer_size, args.seed)

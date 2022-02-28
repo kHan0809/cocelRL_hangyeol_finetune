@@ -5,7 +5,6 @@ import numpy as np
 import itertools
 import torch
 from Algorithm.TD3 import TD3
-from torch.utils.tensorboard import SummaryWriter
 from Common.Utils import set_seed
 
 parser = argparse.ArgumentParser(description='PyTorch Soft Actor-Critic Args')
@@ -29,13 +28,12 @@ parser.add_argument('--log', default=True, type=bool, help='use tensorboard summ
 args = parser.parse_args()
 
 # log
-for iteration in range(1,4):
+for iteration in range(1,2):
     if args.log == True:
-        f = open("./log"+ "TD3_Q" + str(iteration) +".txt", 'w')
+        f = open("./log"+ "TD3_" + str(iteration) +".txt", 'w')
         f.close()
-    args.seed = np.random.randint(1, 9999)
-    # args.seed = 1234
-    print(args.seed)
+    args.seed=set_seed(args.seed)
+    print("SEED : ", args.seed)
 
     # Environment
     # env = NormalizedActions(gym.make(args.env_name))
@@ -50,10 +48,6 @@ for iteration in range(1,4):
     # Agent
     agent = TD3(env.observation_space.shape[0], env.action_space, args)
     print('agent is created!')
-    # Tesnorboard
-    writer = SummaryWriter('runs/{}_SAC_{}_{}_{}'.format(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"), args.env_name, args.policy, "autotune" if args.automatic_entropy_tuning else ""))
-
-    # Memory
 
 
     # Training Loop
@@ -79,7 +73,6 @@ for iteration in range(1,4):
                     # Update parameters of all the networks
                     critic_loss = agent.update_parameters(args.batch_size, updates)
 
-                    writer.add_scalar('loss/critic_1', critic_loss, updates)
                     updates += 1
 
             next_state, reward, done, _ = env.step(action)  # Step
@@ -96,7 +89,6 @@ for iteration in range(1,4):
         if total_numsteps > args.num_steps:
             break
 
-        writer.add_scalar('reward/train', episode_reward, i_episode)
         print("Episode: {}, total numsteps: {}, episode steps: {}, reward: {}".format(i_episode, total_numsteps,
                                                                                       episode_steps,
                                                                                       round(episode_reward, 2)))
@@ -118,13 +110,12 @@ for iteration in range(1,4):
                 avg_reward += episode_reward
             avg_reward /= episodes
 
-            writer.add_scalar('avg_reward/test', avg_reward, i_episode)
 
             print("----------------------------------------")
             print("Test Episodes: {}, Avg. Reward: {}".format(episodes, round(avg_reward, 2)))
             print("----------------------------------------")
 
-            f = open("./log"+ "TD3_Q" + str(iteration) +".txt", 'a')
+            f = open("./log"+ "TD3_" + str(iteration) +".txt", 'a')
             f.write(" ".join([str(total_numsteps), str(int(round(avg_reward)))]))
             f.write("\n")
             f.close()
