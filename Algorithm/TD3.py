@@ -44,6 +44,7 @@ class TD3():
         reward_batch = torch.FloatTensor(reward_batch).to(self.device).unsqueeze(1)
         mask_batch = torch.FloatTensor(mask_batch).to(self.device).unsqueeze(1)
 
+
         with torch.no_grad():
             # Select action according to policy and add clipped noise
             noise = (torch.randn_like(action_batch) * 0.2).clamp(-0.5, 0.5)
@@ -58,6 +59,7 @@ class TD3():
 
         # Q1, Q2 = self.critic(state_batch, action_batch)
         Q1, Q2 = self.critic(torch.cat((state_batch, action_batch),1))
+
         critic_loss = F.mse_loss(Q1,target_Q) + F.mse_loss(Q2,target_Q)
 
         # Optimize the critic
