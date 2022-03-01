@@ -52,6 +52,8 @@ for iteration in range(1,2):
     agent.critic.load_state_dict(torch.load('./model_save/critic.pth'))
     agent.critic_target.load_state_dict(torch.load('./model_save/critic.pth'))
     print('agent is created!')
+    
+    print(asdf)
 
     # Training Loop
     total_numsteps = 0

@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from Common.Utils import weight_init
+from Common.Utils import weight_init, weights_init_Xavier
 from torch.distributions import Normal
 
 class Squashed_Gaussian_Actor(nn.Module):
@@ -120,7 +120,6 @@ class Policy_net(nn.Module):
 
 
 
-
 class Actor(nn.Module):
     def __init__(self,state_dim, action_dim,hidden_dim=256):
         super(Actor, self).__init__()
@@ -138,10 +137,7 @@ class Actor(nn.Module):
         return output
 
 # Initialize Policy weights
-def weights_init_(m):
-    if isinstance(m, nn.Linear):
-        torch.nn.init.xavier_uniform_(m.weight, gain=1)
-        torch.nn.init.constant_(m.bias, 0)
+
 
 class QNetwork(nn.Module):
     def __init__(self, num_inputs, num_actions, hidden_dim=256):
@@ -157,7 +153,7 @@ class QNetwork(nn.Module):
         self.linear5 = nn.Linear(hidden_dim, hidden_dim)
         self.linear6 = nn.Linear(hidden_dim, 1)
 
-        self.apply(weights_init_)
+        self.apply(weights_init_Xavier)
 
     def forward(self, state, action):
         xu = torch.cat([state, action], 1)
@@ -203,7 +199,7 @@ class GaussianPolicy(nn.Module):
         self.mean_linear = nn.Linear(hidden_dim, num_actions)
         self.log_std_linear = nn.Linear(hidden_dim, num_actions)
 
-        self.apply(weights_init_)
+        self.apply(weights_init_Xavier)
 
         # action rescaling
         if action_space is None:
