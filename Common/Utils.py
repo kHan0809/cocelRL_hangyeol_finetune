@@ -14,7 +14,7 @@ def Eval(eval_env, agent, eval_num,render):
         for eval_step in range(eval_env._max_episode_steps):
             if (eval_iter == eval_num-1)&(render):
                 eval_env.render()
-            action = agent.select_action(state, evaluate=True)
+            action = agent.select_action(state)
             next_state, reward, terminal, _ = eval_env.step(action*max_action)
             reward_sum += reward
             state = next_state
@@ -23,6 +23,42 @@ def Eval(eval_env, agent, eval_num,render):
 
         reward_history.append(reward_sum)
     return min(reward_history), sum(reward_history)/len(reward_history), max(reward_history)
+
+def log_start(algo_name,iter,log_flag = False,dir=None):
+    if log_flag:
+        if dir == None:
+            f = open("./log" + algo_name + str(iter) + ".txt", 'w')
+            f.close()
+        else:
+            f = open(dir + algo_name + str(iter) + ".txt", 'w')
+            f.close()
+    else:
+        pass
+
+def log_write(algo_name,iter,log_flag = False,dir=None,total_step=None,result=None):
+    if log_flag:
+        if dir == None:
+            f = open("./log" + algo_name + str(iter) + ".txt", 'a')
+            f.write(str(total_step))
+            for i in range(len(result)):
+                f.write(" ")
+                f.write(str(int(result[i])))
+            f.write("\n")
+            f.close()
+        else:
+            f = open(dir + algo_name + str(iter) + ".txt", 'a')
+            f.write(str(total_step))
+            for i in range(len(result)):
+                f.write(" ")
+                f.write(str(int(result[i])))
+            f.write("\n")
+            f.close()
+    else:
+        pass
+
+
+
+
 
 
 def soft_update(target, source, tau):
