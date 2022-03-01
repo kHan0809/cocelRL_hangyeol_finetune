@@ -28,7 +28,7 @@ parser.add_argument('--log', default=True, type=bool, help='use tensorboard summ
 args = parser.parse_args()
 
 # log
-for iteration in range(1,2):
+for iteration in range(2,6):
     log_start("TD3_double_fnt_",iteration,log_flag=True)
     args.seed=set_seed(args.seed)
     print("SEED : ", args.seed)
@@ -52,8 +52,7 @@ for iteration in range(1,2):
     agent.critic.load_state_dict(torch.load('./model_save/critic.pth'))
     agent.critic_target.load_state_dict(torch.load('./model_save/critic.pth'))
     print('agent is created!')
-    
-    print(asdf)
+
 
     # Training Loop
     total_numsteps = 0
