@@ -8,7 +8,7 @@ from Algorithm.TD3 import TD3
 from Common.Utils import set_seed, Eval, log_start, log_write
 
 parser = argparse.ArgumentParser(description='PyTorch Soft Actor-Critic Args')
-parser.add_argument('--env-name', default="InvertedPendulumSwing-v2",help='Mujoco Gym environment (default: HalfCheetah-v2)')
+parser.add_argument('--env-name', default="InvertedPendulumSwingDoubleLength-v2",help='Mujoco Gym environment (default: HalfCheetah-v2)')
 parser.add_argument('--policy', default="Actor",help='Policy Type: Gaussian | Deterministic (default: Gaussian)')
 parser.add_argument('--automatic_entropy_tuning', type=bool, default=False, metavar='G',help='Automaically adjust α (default: False)')
 parser.add_argument('--eval', type=bool, default=True,help='Evaluates a policy a policy every 10 episode (default: True)')
@@ -29,7 +29,7 @@ args = parser.parse_args()
 
 # log
 for iteration in range(1,2):
-    log_start("TD3_",iteration,log_flag=True)
+    log_start("TD3_double_fnt_",iteration,log_flag=True)
     args.seed=set_seed(args.seed)
     print("SEED : ", args.seed)
 
@@ -46,6 +46,11 @@ for iteration in range(1,2):
 
     # Agent
     agent = TD3(env.observation_space.shape[0], env.action_space, args)
+    #=========pretrained load====================
+    agent.actor.load_state_dict(torch.load('./model_save/actor.pth'))
+    agent.actor_target.load_state_dict(torch.load('./model_save/actor.pth'))
+    agent.critic.load_state_dict(torch.load('./model_save/critic.pth'))
+    agent.critic_target.load_state_dict(torch.load('./model_save/critic.pth'))
     print('agent is created!')
 
     # Training Loop
@@ -88,9 +93,9 @@ for iteration in range(1,2):
                 print("----------------------------------------")
                 print("Test Episodes: {}, Min. Return:{:.2f} Avg. Return: {:.2f} Max Return: {:.2f}".format(total_numsteps,Min_test_return,Avg_test_return,Max_test_return))
                 print("----------------------------------------")
-                log_write("TD3_", iteration, log_flag=True,total_step=total_numsteps,result=[Min_test_return,Avg_test_return,Max_test_return])
-                torch.save(agent.actor.state_dict() ,'./model_save/actor.pth')
-                torch.save(agent.critic.state_dict(), './model_save/critic.pth')
+                log_write("TD3_double_fnt_", iteration, log_flag=True,total_step=total_numsteps,result=[Min_test_return,Avg_test_return,Max_test_return])
+                torch.save(agent.actor.state_dict() ,'./model_save/actor_double_fnt.pth')
+                torch.save(agent.critic.state_dict(), './model_save/critic_double_fnt.pth')
 
 
         if total_numsteps > args.num_steps:
