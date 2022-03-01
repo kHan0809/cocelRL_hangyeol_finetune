@@ -96,6 +96,10 @@ for iteration in range(1,2):
         if i_episode % 10 == 0 and args.eval is True:
             avg_reward = 0.
             episodes = 10
+
+            torch.save(agent.actor.state_dict(), './model_save/actor.pth')
+            torch.save(agent.critic.state_dict(), './model_save/critic.pth')
+
             for _ in range(episodes):
                 state = env.reset()
                 episode_reward = 0
