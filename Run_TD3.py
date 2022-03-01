@@ -8,7 +8,7 @@ from Algorithm.TD3 import TD3
 from Common.Utils import set_seed, Eval, log_start, log_write
 
 parser = argparse.ArgumentParser(description='PyTorch Soft Actor-Critic Args')
-parser.add_argument('--env-name', default="InvertedPendulumSwing-v2",help='Mujoco Gym environment (default: HalfCheetah-v2)')
+parser.add_argument('--env-name', default="InvertedPendulumSwingDoubleLength-v2",help='Mujoco Gym environment (default: HalfCheetah-v2)')
 parser.add_argument('--policy', default="Actor",help='Policy Type: Gaussian | Deterministic (default: Gaussian)')
 parser.add_argument('--automatic_entropy_tuning', type=bool, default=False, metavar='G',help='Automaically adjust α (default: False)')
 parser.add_argument('--eval', type=bool, default=True,help='Evaluates a policy a policy every 10 episode (default: True)')
@@ -29,7 +29,7 @@ args = parser.parse_args()
 
 # log
 for iteration in range(1,2):
-    log_start("TD3_",iteration,log_flag=True)
+    log_start("TD3_double_",iteration,log_flag=True)
     args.seed=set_seed(args.seed)
     print("SEED : ", args.seed)
 
@@ -88,9 +88,9 @@ for iteration in range(1,2):
                 print("----------------------------------------")
                 print("Test Episodes: {}, Min. Return:{:.2f} Avg. Return: {:.2f} Max Return: {:.2f}".format(total_numsteps,Min_test_return,Avg_test_return,Max_test_return))
                 print("----------------------------------------")
-                log_write("TD3_", iteration, log_flag=True,total_step=total_numsteps,result=[Min_test_return,Avg_test_return,Max_test_return])
-                torch.save(agent.actor.state_dict() ,'./model_save/actor.pth')
-                torch.save(agent.critic.state_dict(), './model_save/critic.pth')
+                log_write("TD3_double_", iteration, log_flag=True,total_step=total_numsteps,result=[Min_test_return,Avg_test_return,Max_test_return])
+                torch.save(agent.actor.state_dict() ,'./model_save/actor_double.pth')
+                torch.save(agent.critic.state_dict(), './model_save/critic_double.pth')
 
 
         if total_numsteps > args.num_steps:
