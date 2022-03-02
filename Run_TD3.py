@@ -28,9 +28,10 @@ parser.add_argument('--log', default=True, type=bool, help='use tensorboard summ
 args = parser.parse_args()
 
 # log
-for iteration in range(2,6):
+for iteration in range(3,6):
     log_start("TD3_double_",iteration,log_flag=True)
     args.seed=set_seed(args.seed)
+    args.seed = args.seed + 1
     print("SEED : ", args.seed)
 
     # Environment
